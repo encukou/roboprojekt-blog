@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>RoboProjekt</title><link href="https://roboprojekt.pyladies.cz/" rel="alternate"></link><link href="https://roboprojekt.pyladies.cz/feed.xml" rel="self"></link><id>https://roboprojekt.pyladies.cz/</id><updated>2018-12-11T18:00:00+01:00</updated><entry><title>Jedenáctý sraz - MVC a spousta práce</title><link href="https://roboprojekt.pyladies.cz/jedenacty-sraz" rel="alternate"></link><published>2018-12-11T18:00:00+01:00</published><updated>2018-12-11T18:00:00+01:00</updated><author><name>Anežka Müller</name></author><id>tag:roboprojekt.pyladies.cz,2018-12-11:/jedenacty-sraz</id><summary type="html">&lt;div&gt;&lt;p&gt;Vzhledem k tomu, že aktuální stav projektu sám generuje další a další úkoly a problémy k řešení, stejně jako schůzka minulá, i toto setkání se na začátku neslo v duchu řešení toho, na co jsme narazily při práci v uplynulém týdnu.&lt;/p&gt;
+&lt;p&gt;Úspěchem od minulé lekce je, že se roboti zastavují …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;Vzhledem k tomu, že aktuální stav projektu sám generuje další a další úkoly a problémy k řešení, stejně jako schůzka minulá, i toto setkání se na začátku neslo v duchu řešení toho, na co jsme narazily při práci v uplynulém týdnu.&lt;/p&gt;
+&lt;p&gt;Úspěchem od minulé lekce je, že se roboti zastavují o zdi, pracujeme na rozdělení backendu na více modulů, snažíme se o aktualizaci glosáře pojmů, který nám bude užitečný při práci s kódem, pojmenovávání funkcí a tvorbě dokumentačních řetězců, aby názvosloví bylo jednotné, a přibyl také validátor map. &lt;/p&gt;
+&lt;p&gt;Protože bychom měly rády v projektu většinu věcí automatizovanou, jedním z úkolů byl i automatický převod obrázků z vektorového SVG do PNG. Objevil se ale problém se spouštěním Inkscape z příkazové řádky. V Linuxu to funguje jednoduše - když člověk napíše do terminálu Inkscape, program se spustí. To bohužel není přenositelné do Windows. Nezbývá tedy, než vypsat všechny možné cesty, které může Win použít, aby kód fungoval i s tímto OS. 
+Také bychom chtěly, aby se pak vygenerované soubory PNG ukládaly do jiného adresáře, je tedy třeba ve funkci pro převod nejen nastavit novou příponu souboru, ale i novou složku.
+Užitečným pomocníkem zde je knihovna &lt;a href="https://docs.python.org/3/library/pathlib.html"&gt;pathlib&lt;/a&gt;, která umí například jednoduše měnit příponu, rozkouskovat cestu, zaměnit její části a tím pádem vytvořit cestu novou. Umí také vytvořit adresáře dané cesty a &lt;a href="https://github.com/pyvec/cheatsheets/blob/master/pathlib/pathlib-cs.pdf"&gt;další šikovné věci&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Hvězdičková magie&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Při vytváření funkce na automatické generování souborů PNG jsme narazily na to, že potřebujeme jako argument funkce použít postupně všechny prvky seznamu, o kterém nevíme, kolik těch prvků celkově má. Pro tento případ lze použít hvězdičku. Hvězdička pak jednotlivé prvky seznamu naskládá jako argumenty dané funkce. &lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;
+
+&lt;span class="n"&gt;arguments&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;arguments&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Hvězdička lze využít například i při tvorbě seznamu, princip je stejný, postupně použije jednotlivé prvky. Tedy &lt;code&gt;print([1, *arguments, 8, 9])&lt;/code&gt; vypíše &lt;code&gt;[1, 2, 3, 4, 5, 6, 7, 8]&lt;/code&gt;, zatímco bez hvězdičky by se vložil celý seznam arguments jako prvek nového seznamu, tedy &lt;code&gt;[1, [2, 3, 4, 5, 6, 7], 8]&lt;/code&gt;.
+Hvězdička takto funguje na vše, co se dá rozložit na jednotlivé prvky, tedy i na řetězce. Hvězdička tedy označuje nějakou sekvenci a používá jednotlivé prvky dané sekvence. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Stav hry&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;V současné chvíli je kód napsaný tak, že vytváří stav hry, který obsahuje herní plán (rozmístění jednotlivých políček), jeho velikost a také všechny roboty. Myšlenka je taková, že se při jakékoliv změně vytvoří nový stav hry. Tento přístup jsme zvolily na jednom z prvních setkání. V současnou chvíli ale stav hry vrací pouze funkce pro vytvoření stavu počátečního, vše ostatní s ním jen dále pracuje a upravuje ho, ale nevrací stav nový. Do budoucna bude třeba tuto problematiku řešit, až budeme chtít posílat stav hry na jiný počítač pro variantu multiplayeru, v současné fázi vývoje to však ještě není třeba. Je to ale něco, na co dříve či později narazíme.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Rozhraní pro ovládání hry&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Na minulém srazu jsme se dohodly, že rozhraní pro ovládání hry bude vykresleno v samostatném okně. Do tohoto úkolu se pustila Terka. Pro ovládání hry zvolila klávesy. To ovšem generuje problém, jak sdělit programu, která klávesa je zmáčknutá. Existují dvě varianty. Lze vuyžít nadefinování uživatelem, kdy by si hráč sám určil, které klávesy chce pro ovládání používat, nebo varianty, kdy systém říká, jaký uživatel zadal text, nikoliv jakou zmáčkl klávesu. Tento přístup však neumožňuje pracovat s tím, když uživatel klávesu pustí, zpracovává jen vstup v podobě řetězce, který by se objevil v textovém editoru.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Jak navrhovat rozhraní&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Při návrhu uživatelského rozhraní se osvědčil tzv. MVC návrhový vzor, zkratka pro &lt;strong&gt;“Model - View - Controller”&lt;/strong&gt;.
+Model v našem případě reprezentuje data. Jaké karty má hráč, kolik má který robot životů, kolik už nasbíral vlajek apod. Toto rozhraní pak dokážu vykreslit, což bude naše View. Operace “Vykreslit” vezme model a vykreslí ho do okénka. 
+Když uživatel udělá nějakou změnu, udělá se na modelu a vykreslí se nový stav. Většinou se volí přístup, kdy vykreslování a reakce na události jsou od sebe oddělené, jsou to dvě různé funkce nebo i různé moduly. Reakce na události by tedy byl náš Controller, pokud bychom se držely MVC terminologie. 
+Změny ve hře mohou pocházet i odjinud než z controlleru a view může zobrazovat různé věci. Obrázek níže tak ukazuje aplikaci MVC na náš současný kód, kdy View zobrazuje dvě různé věci, ovládání hry a herní plochu. Navíc máme stranou načítání, které umí vytvořit část modelu, konkrétně herní plán bez robotů. Ty potom dodá backend.&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;a href="./images/mvc.jpg" target="_blank" title="MVC"&gt;&lt;img alt="MVC" src="https://roboprojekt.pyladies.cz/images/thumbnails/mvc.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/a&gt;&lt;/figure&gt;
+&lt;p&gt;V současnou chvíli také pracujeme pouze s jedním stavem, který měníme, což bylo zmíněno výše. Ve chvíli, kdy budeme pracovat s tím, že se model bude synchronizovat mezi více počítači. Pak bude třeba, aby každá změna, která upravuje stav, zavolala funkci, která řekne, že se stav změnil a pošle novou verzi stavu. Je dobré mít změny oddělené a co nejmenší. 
+Změny modelu lze řešit několika způsoby: úprava atributu/proměnné (jak to děláme teď), notifikace o změně, metoda modelu (nezáleží na tom, jak jsou data v modelu reprezentována, pracujeme pouze s tím, co se má stát) nebo vytvoření objektu, který reprezentuje změnu, což je dobré, pokud změna ovlivňuje více věcí, než model. Toto jsou věci, které budeme v budoucnu potřebovat nějak vyřešit. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Políčka&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Často se vracíme k problematice zdí a narazily jsme na ni i na této lekci. Tentokrát se jednalo o vzhled mapy. Zeď se nyní dá na políčko dát kamkoliv a v některém případě, kde na sebe zdi navazují, to může generovat nehezké vyobrazení (viz obrázek). &lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="zdi" src="./images/zed.png" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;Petr přišel s návrhem, kdy by nejen u zdi, ale i u laseru pomohlo, kdyby v budoucnu bylo odděleno to, jak mapa vypadá v editoru a jak bude poté vypadat ve hře. Například u laserů, kde hraje zásadní roli, kterým směrem laser střílí, by v editoru mohly být šipky, aby bylo vidět, že je laser správně otočený. Ve hře už by to viditelné nebylo. Stejně tak by to mohlo fungovat u zdí. Při tvorbě mapy by bylo jasné, součástí kterého je políčka, ale nerovnosti jako na obrázku výše už by nebyly vyobrazené v samotné hře. Například lze udělat obrázek posunutý o několik pixelů, takže bude vypadat, jako by zeď byla skutečně na hranici mezi dvěma políčky. Opět něco, co nás čeká v budoucnu. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Dědičnost&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Jako jeden z dalších úkolů je rozpracovat efekty políček. Pro naši hru bude dobré zopakovat si dědičnost mezi třídami a vytvořit jednotlivá políčka jako podtřídy naší třídy &lt;code&gt;Tile&lt;/code&gt;, ze které budou dědit. Třída Tile tak bude obsahovat všechny metody, které mohou v jejích podtřídách nastat, ale bez vracení konkrétního efektu. Konkrétně pak metoda bude rozepsána až v dané podtřídě. Bohužel jsme dědičnost proletěly jen z rychlíku, tak bude tento úkol do příště poměrně náročný :) &lt;/p&gt;
+&lt;p&gt;Spolu s ním nás čeká ještě dokončit rozdělení kódu na moduly, další práce s roboty a také s rozhraním hry. Potřebujeme dále zařídit, aby se dala měnit velikost vykreslených oken a zároveň se tomu přizpůsoboval jejich obsah. Stále máme i několik dlouhodobých úkolů, práce tedy není málo :) &lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>Desátý sraz - testy a bity</title><link href="https://roboprojekt.pyladies.cz/desaty-sraz-testy-a-bity" rel="alternate"></link><published>2018-12-05T10:17:00+01:00</published><updated>2018-12-05T10:17:00+01:00</updated><author><name>Karolina Surma</name></author><id>tag:roboprojekt.pyladies.cz,2018-12-05:/desaty-sraz-testy-a-bity</id><summary type="html">&lt;div&gt;&lt;h1&gt;Úvod&lt;/h1&gt;
+&lt;p&gt;Po období zvýšené projektové aktivity jsme se trochu nechaly ovlivnit počasím a přestaly sypat pull requesty jeden za druhým. Další sraz proto Terka začala krátkým zjišťovacím kolečkem, když jsme řekly, na čem jsme pracovaly a co nám momentálně dělá problém. Projekt se nám poslední dobou hodně rozrostl a všechny …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;h1&gt;Úvod&lt;/h1&gt;
+&lt;p&gt;Po období zvýšené projektové aktivity jsme se trochu nechaly ovlivnit počasím a přestaly sypat pull requesty jeden za druhým. Další sraz proto Terka začala krátkým zjišťovacím kolečkem, když jsme řekly, na čem jsme pracovaly a co nám momentálně dělá problém. Projekt se nám poslední dobou hodně rozrostl a všechny se potýkáme s tím, že i když tušíme, jak napsat novou vlastnost, vplést ji do stávajícího kódu je o dost těžší, než bylo na začátku. 
+Daly jsme se na rekapitulaci otevřených pull requestů na témata:
+- přidat načítání map jiné velikosti, než 12x12,
+- přidat třídu Rotace (přejmenovaná na Směr - Direction) - podrobně popsaná &lt;a href="https://roboprojekt.pyladies.cz/par-slov-o-datovem-typu-enum"&gt;zde&lt;/a&gt;,
+- napsat testy k jednotlivým funkcím v modulu backend,&lt;/p&gt;
+&lt;p&gt;kde jsme dospěly k závěru, že cítíme blok k recenzování kódu kolegyň, když jsou změny složitější a nedokážeme vyhodnotit, zda použité metody jsou skutečně na správném místě. Zjistit, že program pořád funguje, není těžké. Vyhodnotit, zda změny dávají smysl v kontextu celého projektu - je. &lt;/p&gt;
+&lt;h1&gt;K čemu vlastně potřebujeme testy?&lt;/h1&gt;
+&lt;p&gt;Při procházení otevřených PR jsme se chvíli zdržely u tématu testování. Nejdřív jsme dostaly za úkol dopsat testy do každé funkce modulu backend, ale když už byly napsané, Petr poznamenal: &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Nestudoval jsem to detailně (to je na vás), ale všiml jsem si, že se tu přidává spousta chybějících testů, ale nemění se kód. To mi přijde trošku podezřelé.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Nám zřejmě ne ;). Na srazu jsme si proto společně dali krátký pokec, jak vypadá smysluplné testování. 
+Například při tvoření nových metod většinou shora víme, čeho chceme dosáhnout:
+- pokud otočím robotem, bude směřovat na správnou světovou stranu, 
+- pokud vykreslím konkrétní mapu, na koordinátách (5, 5) bude skutečně v první vrstvě políčko &lt;em&gt;ground&lt;/em&gt;,
+- pokud postavím roboty na start, budou skutečně přiřazení na startovací políčka. &lt;/p&gt;
+&lt;p&gt;To znamená, že společně s vývojem vznikají dobré testovací scénáře, které stojí za to rovnou dopsat do testovacího balíku. Je dobré psát testy, i když náš kód ještě nefunguje, ale již víme, jak chceme, aby se používal. Tím si při dalších krocích vývoje zlehčíme práci: testy v určitou chvíli zezelenají, díky čemuž víme, že jsme dosáhly naplánované funkčnosti a můžeme se vrhnout na integraci nového a starého kódu.&lt;/p&gt;
+&lt;p&gt;Člověk, jenž v danou chvíli přemýšlí o testech ke kódu, který byl už napsán někým jiným, může objevit nelogičnosti a najít lepší způsoby uspořádání dat. V tuto chvíli jeho úkol je tyto změny zanést i do testovaného kódu. &lt;/p&gt;
+&lt;p&gt;Čeká nás tedy revize stávajících testů a případné úpravy. &lt;/p&gt;
+&lt;h1&gt;Rychlý kuk na glosář pojmů&lt;/h1&gt;
+&lt;p&gt;Kromě projektu na GitHubu si zvlášť udržujeme glosář pojmů s cílem sjednocení názvosloví a významu v kódu. Měl by reflektovat třídní diagram nakreslený v začátcích (česky) a stávající stav našich modulů (anglicky). Zároveň by měl poskytovat co nejpřesnější popis, co daný pojem v našem projektu znamená.
+Jako příklad nám Petr uvedl pojem &lt;em&gt;tile&lt;/em&gt;, jehož definice nebyla ideální. Původně jsme měly:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;tile&lt;/em&gt; - třída definující dlaždici pomocí otočení dlaždice (‘rotation’) a cestou k souboru s obrázkem dlaždice (‘path’)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Po přepracování zní: &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;tile&lt;/em&gt; je konkrétní efekt políčka (např laser nebo pohyblivý pás) s konkrétním směrem otočení. Na jednom políčku mapy může být víc těchto efektů políčka. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Další úkol je zapracovat na glosáři, aby definice co nejlépe odpovídaly pravdě. &lt;/p&gt;
+&lt;h1&gt;Různé způsoby zápisu čísel&lt;/h1&gt;
+&lt;p&gt;Téma poslední části srazu bylo mnou objednáno již před nějakou dobou. Do kódu jsme si přidaly po třetím srazu "magické formulky": &lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;cislo&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2684354562&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="nb"&gt;hex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cislo&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="s1"&gt;'0xa0000002'&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;cislo&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="mh"&gt;0xFFFFFFF&lt;/span&gt; &lt;span class="c1"&gt;# kouzelná formulka pro zjištění ID dlaždice&lt;/span&gt;
+&lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;cislo&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# kouzelná formulka pro zjištění otočení&lt;/span&gt;
+&lt;span class="mi"&gt;10&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Při pokusu o napsání testu na tuto část jsem zjistila, že když formulce nerozumím, nedokážu ani jednou větou popsat, co se v ní odehrává.
+Petr nám proto zařádil malé vyprávění o bitových operacích a číselných soustavách.&lt;/p&gt;
+&lt;p&gt;Začalo to číslem &lt;em&gt;tři&lt;/em&gt;. Číslo je &lt;em&gt;něco&lt;/em&gt;, co můžeme &lt;em&gt;nějak&lt;/em&gt; zapsat. Konkrétně trojku můžeme ukázat na prstech, napsat tři čárky, nebo použít arabskou číslici: 3. V každém z těchto případů se bavíme o stejné myšlenkové reprezentaci počtu. 
+V běžném životě používáme desítkovou soustavu, což znamená, že pokud před číslo 0 dáme na začátek 1, navýšily jsme ho o deset. Pokud přidáme další 1 před 10, navýšily jsme ho o deset desítek (sto), atd. Každé další číslo je další mocnina desítky. &lt;/p&gt;
+&lt;p&gt;Počítače zase používají dvojkovou, neboli binární soustavu. Počítač zná dva stavy: buď něco (např. magnet, světlo, napětí) je, nebo není. K tomu mu stačí jen dva symboly: 0 a 1. Každé nové číslo postavené na začátek je další mocnina dvojky.&lt;/p&gt;
+&lt;p&gt;Python umí pracovat s čísly zapsanými různými způsoby. Např. binární soustavu pozná podle &lt;code&gt;0b&lt;/code&gt; na začátku výrazu. Pořád se ale jedná o stejnou hodnotu, porovnání stejných čísel ve dvojkové a desítkové soustavě je tedy vždy pravda.&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="mb"&gt;0b010110&lt;/span&gt; 
+&lt;span class="mi"&gt;22&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;12&lt;/span&gt; 
+&lt;span class="mi"&gt;22&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;12&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mb"&gt;0b010110&lt;/span&gt;
+&lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;bin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;22&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="s1"&gt;'0b010110'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Počítače ukládají informace na určitých místech v paměti. Známe pojmy bit a bajt, kde bit je jeden takový znak (0 nebo 1), bajt - 8 znaků. V jednom bajtu, na osmi místech, můžeme zakódovat až 256 čísel (2&lt;sup&gt;8&lt;/sup&gt;). &lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="mb"&gt;0b11111111&lt;/span&gt;     &lt;span class="c1"&gt;# maximální možná hodnota&lt;/span&gt;
+&lt;span class="mi"&gt;255&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Spousta věcí se dá zakódovat do 256 znaků. Podívejme se na znaky anglické abecedy, tzv. kódování ASCII: 6 bitů potřebuje na malou abecedu plus nějaké znaky kolem (čísla, závorky atd.), 1 bit pro zjištění, jestli písmenko je malé, nebo velké. 7 bitů stačí pro zapsání v podstatě celé standardní klávesnice, jak ji známe.&lt;/p&gt;
+&lt;p&gt;Už 4 bajty jsou dostačující třeba na to, aby reprezentovaly barvu: červenou (R), zelenou (G) a modrou (B). Každá složka je osmibitové číslo (tedy 0 až 255), které tak nějak odpovídá tomu, kolik barev je schopné rozeznat lidské oko. Čtvrtý bajt se aktuálně nejvíc používá pro označení průhlednosti. 
+32 bitů je ale spousta jedniček a nul. Zde nám přichází vhod jiná soustava, postavená na šestnáctkách (2&lt;sup&gt;4&lt;/sup&gt;). Jeden znak obsahuje stejnou informaci, jako 4 bity, s čímž se dá dobře pracovat. &lt;/p&gt;
+&lt;p&gt;Pokud symboly &lt;code&gt;10&lt;/code&gt; v hexadecimální soustavě znamenají &lt;code&gt;16&lt;/code&gt; v desítkové, jak vyjádřit číslo 15? Šestnáctková soustava používá čísla 0-9 a dál: A, B, C, D, E, F. &lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="mh"&gt;0x10&lt;/span&gt;
+&lt;span class="mi"&gt;16&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;hex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mh"&gt;0x10&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="mh"&gt;0xF&lt;/span&gt;
+&lt;span class="mi"&gt;15&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Kódy barev můžeme tedy buď uvádět v rozsahu 0-255 pro každou barevnou složku, nebo v hexadecimální soustavě, kde na dvou místech máme červenou, na dvou zelenou, na dvou modrou a na dvou posledních - průhlednost. &lt;/p&gt;
+&lt;p&gt;A zde, u hexadecimální soustavy, se dostáváme k programu Tiled a způsobu, jakým zapisuje čísla. Používá totiž čtveřice bajtů na reprezentaci políčka ve vrstvě mapy: tři jsou číslo dlaždice, a jeden - rotace. &lt;/p&gt;
+&lt;p&gt;Pokud si testovací dlaždici uložíme ve čtyřech různých směrech a podíváme na čísla, které nám uvede Tiled po exportu mapy do JSONu, budou vypadat pro lidské oko dost šíleně. Pokud je ovšem převedeme do hexadecimální soustavy, začnou dávat trochu smysl:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;cisla&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;49&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2684354609&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3221225521&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;16160612785&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;hex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;cisla&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'0x31'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'0xa0000031'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'0xc0000031'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'0x60000031'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;&lt;code&gt;000031&lt;/code&gt; je číslo naši dlaždice, její ID (ony tři vyhrazené bajty).
+&lt;code&gt;00&lt;/code&gt;, &lt;code&gt;a0&lt;/code&gt;, &lt;code&gt;c0&lt;/code&gt;, &lt;code&gt;60&lt;/code&gt; je bajt s otočením. Jednotlivé bity skrývající se pod tímto označením mají speciální význam: jeden bit je na otočení ve vertikální ose, druhý - horizontální, třetí - transpozice. &lt;/p&gt;
+&lt;p&gt;Existují způsoby, jak vzít konkrétní bity z nějakého čísla, slouží k tomu bitový operátor &lt;code&gt;&amp;amp;&lt;/code&gt; (AND). Mezi oběma čísly nad každým bitem proběhne logické vyhodnocení pravda/nepravda, které se promítne do výsledku: 
+- &lt;code&gt;1&lt;/code&gt; neboli &lt;em&gt;pravda&lt;/em&gt; je pouze tam, kde na obou místech porovnávaných čísel byla jednička.
+- &lt;code&gt;0&lt;/code&gt; neboli &lt;em&gt;nepravda&lt;/em&gt; pro všechny ostatní případy. 
+Jinými slovy, pokud v naší porovnávací operaci uvedeme na některé místo nulu, zaručíme si tím, že výsledek bude vyhodnocen jako nepravda.&lt;/p&gt;
+&lt;p&gt;Pokud vím, že informace o rotaci dlaždice je na dvou prvních místech, můžu si nadefinovat takovou operaci, která mi vrátí pouze první číslice, zbytek ignoruje:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;hex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mh"&gt;0x12345678&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="mh"&gt;0xff000000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="s1"&gt;'0x12000000'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Další věc, kterou s ním můžu udělat, je posunout si bity na některou stranu pomocí operátoru &lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt; nebo &lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt;. Pokud mě skutečně zajímají jen dvě první číslice, odstraním zbytek tak, že posunu výraz o 3 krát 8 bitů:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;hex&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mh"&gt;0x12345678&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="mh"&gt;0xff000000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="mh"&gt;0x12&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Byla to fascinující odbočka od Pythonu, ale musím říct, že mi magie teď nepřipadá ani o kousek méně magická :). &lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>Pár slov o datovém typu Enum</title><link href="https://roboprojekt.pyladies.cz/par-slov-o-datovem-typu-enum" rel="alternate"></link><published>2018-12-04T20:48:00+01:00</published><updated>2018-12-04T20:48:00+01:00</updated><author><name>Karolina Surma</name></author><id>tag:roboprojekt.pyladies.cz,2018-12-04:/par-slov-o-datovem-typu-enum</id><summary type="html">&lt;div&gt;&lt;h1&gt;Třída Direction - příklad implementace&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;(dřív zde na blogu pojmenovaná Rotation)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Na dnešním srazu jsme řešily víc témat, z nichž jedno bylo použití třídy &lt;strong&gt;Direction&lt;/strong&gt; datového typu Enum. Protože je to látka nová pro nás všechny na Roboprojektu, zde si podrobněji rozepíšeme, k čemu a jak třídu tohoto typu můžeme použít …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;h1&gt;Třída Direction - příklad implementace&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;(dřív zde na blogu pojmenovaná Rotation)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Na dnešním srazu jsme řešily víc témat, z nichž jedno bylo použití třídy &lt;strong&gt;Direction&lt;/strong&gt; datového typu Enum. Protože je to látka nová pro nás všechny na Roboprojektu, zde si podrobněji rozepíšeme, k čemu a jak třídu tohoto typu můžeme použít.&lt;/p&gt;
+&lt;p&gt;Doposud byly v projektu třídy tři: &lt;em&gt;Robot&lt;/em&gt;, &lt;em&gt;Tile&lt;/em&gt; a &lt;em&gt;State&lt;/em&gt;. Ta poslední obsahuje jak informace o mapě, tak o robotech a jejích koordinátách. Všechny byly napsány podle pravidel nám známých ze &lt;a href="https://naucse.python.cz/course/pyladies/beginners/class/"&gt;začátečnického kurzu PyLadies&lt;/a&gt;, to znamená, že můžeme (a měly bychom) vytvořit nové objekty dané třídy tak, že ho inicializujeme, např.:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;my_robot = Robot(&amp;lt;direction&amp;gt;, &amp;lt;picture&amp;gt;, &amp;lt;coordinates&amp;gt;)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Mezi &lt;code&gt;&amp;lt;&amp;gt;&lt;/code&gt;  výše se nachází příklady argumentů, které musíme dát objektu třídy &lt;em&gt;Robot&lt;/em&gt;, aby se korektně objevil na mapě (tzn. vykreslil správný obrázek na správném místě mapy se zobáčkem nasměrovaným na sever/ jih/ západ/ východ). &lt;/p&gt;
+&lt;p&gt;Třída &lt;strong&gt;Direction&lt;/strong&gt; je ale jiná. Zde víme předem, kolik objektů této třídy bude ve hře: 4. Víme, že samotné objekty se nebudou měnit, ale je možné změnit směr robota nebo políčka na nový. Nebudeme inicializovat nové objekty této třídy, ale uložíme si naše směry jako konstanty. Z objektu takové třídy by se měly dát vyčíst různé informace dle tabulky obsažené v &lt;a href="https://roboprojekt.pyladies.cz/devaty-sraz-upravujeme-navrhujeme"&gt;předchozím postu&lt;/a&gt;. &lt;/p&gt;
+&lt;p&gt;O třídě, která se zdá být vhodná pro řešení tohoto zadání, jsme se již před nějakou dobou bavily. Jedná se o datový typ Enum, importovaný na začátku pythonního souboru:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;enum&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Enum&lt;/span&gt; 
+
+    &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Direction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Enum&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;N&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+        &lt;span class="n"&gt;E&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;90&lt;/span&gt;
+        &lt;span class="n"&gt;S&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;180&lt;/span&gt;
+        &lt;span class="n"&gt;W&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;270&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Pokud si tu třídu naimportujeme do konzole nebo vyzkoušíme .py soubor, můžeme k jejím objektům přistoupit velice jednoduše:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;180&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;S&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;E&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;90&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;S&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;K objektu takovéhle třídy se můžeme dostat jak skrz jeho &lt;em&gt;name&lt;/em&gt; (N, E, S, W), tak &lt;em&gt;value&lt;/em&gt; (0, 90, 180, 270). 
+Díky tomu můžeme jednoduchým sčítáním otočit robota a aktualizovat jeho směr (tzn. přiřadit mu nový objekt této třídy).&lt;/p&gt;
+&lt;p&gt;K čemu je datový typ &lt;em&gt;Enum&lt;/em&gt; dobrý? Jeho objekty jsou už uvnitř inicializované (nemusí se definovat metoda &lt;code&gt;__init__()&lt;/code&gt;) a dostupné pro využití v dalším kódu. 
+O směru ale, jak jsme si psaly v tabulce, můžeme uvažovat na spoustu způsobů: 
+- světová strana
+- stupně otočení
+- kudy se posune náš objekt, pokud na něm uplatním metodu pohyb v Xové a Yové ose (delta koordinát) 
+- výčet (rozsah 0-3)&lt;/p&gt;
+&lt;p&gt;Pro různé účely potřebujeme různé zápisy té stejné věci. Měly jsme si rozmyslet, které z výše uvedených informací informaci dáme třídě jako atribut, a které získáme metodou. Není jeden správný způsob, jak si tyto informace uložit. Mně se nelíbilo, že nové koordináty nebo výčet musím získat metodou, když hned při náhledu na objekt "vím", kam se nově posune. Udělala jsem tedy jinou fintu:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;enum&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Enum&lt;/span&gt; 
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Direction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Enum&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;N&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+    &lt;span class="n"&gt;E&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;90&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+    &lt;span class="n"&gt;S&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;180&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+    &lt;span class="n"&gt;W&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;270&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Stávající implementace všechny potřebné informace ukládá jako atributy, ke kterým můžou sahat další části programu:
+- stupně potřebujeme pro vykreslení objektů (robotů a políček) v pygletu
+- díky deltě koordinát můžeme vypočítat nové místo robota na mapě
+- mapy s políčky, které se exportují z programů Tiled, mají přidané "custom properties" - námi nadefinované vlastnosti, které pracují s integery.&lt;/p&gt;
+&lt;p&gt;Tím pádem víme, co směr &lt;strong&gt;je&lt;/strong&gt;, ale co má tedy &lt;strong&gt;umět&lt;/strong&gt;? 
+Cíl byl jasný: pokud se robot, který směruje na západ, otočí o 90 stupňů, bude směrovat na sever. Zdá se: nic jednoduššího, než napsat na to metodu, kopírující chování, které jsme si vyzkoušely před chvílí v konzoli! &lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;get_new_direction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;where_to&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;where_to&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;"right"&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;90&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;360&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Můj robotí příklad přeložen do Pythonu by měl znít takto:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;W&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_new_direction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"right"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Jenže kód výše nefunguje. &lt;em&gt;Value&lt;/em&gt; totiž teď není jen &lt;code&gt;270&lt;/code&gt;, ale celá hodnotá - jakási trojice: &lt;code&gt;270, (-1, 0), 3&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;V &lt;a href="https://docs.python.org/3/library/enum.html#planet"&gt;dokumentaci Pythonu&lt;/a&gt; se můžeme dočíst, že lze dát objektu typu Enum víc atributů, ale aby nebyly zapsané jako trojice, musíme přepsat metodu &lt;code&gt;__init__()&lt;/code&gt; a atributy v ní rozbalit. &lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;degrees&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;coordinates_delta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tile_property&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;degrees&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;degrees&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;coordinates_delta&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;coordinates_delta&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tile_property&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;tile_property&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Díky tomu, když vypíšeme:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;E&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;degrees&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;E&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;coordinates_delta&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;E&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tile_property&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Dostaneme:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="mi"&gt;90&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Ale co naše metoda? Žádný atribut &lt;em&gt;value&lt;/em&gt; nemáme, tak se přepíše na &lt;code&gt;self.degrees&lt;/code&gt;, a můžeme slavnostně spustit testovací otočení. V tu chvíli by to všechno mělo vybuchnout velkou chybou:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;Traceback (most recent call last):
+  File "numer.py", line 38, in &amp;lt;module&amp;gt;
+    aa = Direction.W.get_new_coordinates("right")
+  File "numer.py", line 22, in rotate
+    return Direction((self.degrees + 270) % 360)
+  File "/usr/lib/python3.6/enum.py", line 293, in __call__
+    return cls.__new__(cls, value)
+  File "/usr/lib/python3.6/enum.py", line 535, in __new__
+    return cls._missing_(value)
+  File "/usr/lib/python3.6/enum.py", line 548, in _missing_
+    raise ValueError("%r is not a valid %s" % (value, cls.__name__))
+ValueError: 0 is not a valid Direction 
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Python totiž ví, že objekt třídy &lt;strong&gt;Direction&lt;/strong&gt; nemůže mít jen jeden atribut - daly jsme mu až 3. Na druhou stranu, naši jednoduchou metodu na otočení nelze nyní napsat lépe, protože Python teď neví, jak zjistit, který objekt jeho třídy Direction má 0 stupňů, a následně mu přiřadit zbývající atributy tohoto konkrétního objektu. Uff.&lt;/p&gt;
+&lt;p&gt;Řešení přinesl internet, a konkrétně &lt;a href="http://xion.io/post/code/python-enums-are-ok.html"&gt;tento post&lt;/a&gt;, kde přistál nápad na přepsání metody &lt;code&gt;__new__()&lt;/code&gt;, aby vynutila chování, které potřebujeme pro vyřešení problému.&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__new__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;degrees&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;coor_delta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tile_property&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;obj&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="fm"&gt;__new__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_value_&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;degrees&lt;/span&gt;
+        &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;coor_delta&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;coor_delta&lt;/span&gt;
+        &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map_property&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;tile_property&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;obj&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Díky této metodě atribut &lt;em&gt;value&lt;/em&gt; jsou nyní stupně. Python ví, že pokud najde objekt třídy Direction, který má &lt;em&gt;value&lt;/em&gt; 90, pak tento objekt má zároveň &lt;em&gt;deltu&lt;/em&gt; (+1, 0) a &lt;em&gt;property&lt;/em&gt;: 1. A to je přesně ono!
+Pokud nyní zavoláme naši metodu a otočíme objekt směřující na západ o 90 stupňů doprava, dostaneme objekt Direction.N, který bude mít správně přiřazené další atributy. &lt;/p&gt;
+&lt;h1&gt;Metoda &lt;code&gt;__add__()&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;V jednom z commitů se našla metoda &lt;code&gt;__add__()&lt;/code&gt; (nedostala se do finální verze, ale vzbudila náš zájem, tak ji nám Petr vysvětlil na srazu).
+Již známe speciální metodu &lt;code&gt;__init__()&lt;/code&gt;, která umožňuje inicializovat nové objekty dané třídy. Podtržítka u &lt;code&gt;__add__()&lt;/code&gt; naznačují, že se jedná o další speciální metodu.&lt;/p&gt;
+&lt;p&gt;Můžeme si představit třídu Direction, která označí čtyři směry:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Direction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Enum&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;FORWARD&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+    &lt;span class="n"&gt;RIGHT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+    &lt;span class="n"&gt;BACK&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+    &lt;span class="n"&gt;LEFT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Už víme, jak se můžeme dostat k jednotlivým informacím obsaženým v objektech takové třídy.&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;BACK&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;           &lt;span class="c1"&gt;# Direction.BACK&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;BACK&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;     &lt;span class="c1"&gt;# 2&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;             &lt;span class="c1"&gt;# Direction.BACK&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Občas se nám může hodit i jiná operace, např. sčítání. Pokud máme objekt směřující dolu a posuneme ho doleva, chceme se dostat do směru vpravo. 
+Můžeme se pokusit o standardní sčítání. Víme, že Python umí pracovat s čísly, pokud mu tak dáme jako argumenty integery, poradí si s nimi bez chyby:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;new_direction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;BACK&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;  &lt;span class="c1"&gt;# 1&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;new_direction&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;                 &lt;span class="c1"&gt;# Direction.RIGHT&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Ale jak Python ví, že má sečíst dvě hodnoty po obou stranách znaku plus? Všechno, co Python umí, v něm někdo naprogramoval. Základní operace tvoří balík standardních funkcí - to jsou ty, které se pak učíme na začátečnickém kurzu. Nemusíme Python znovu učit, jak má zacházet např. se základní matematikou, protože objekty třídy integer nebo float mají nadefinované metody, které to umí udělat. 
+V lekci o &lt;a href="https://naucse.python.cz/course/pyladies/beginners/inheritance/"&gt;dědičnosti&lt;/a&gt; jsme se učily, jak vytvářet podtřídy a přepisovat v nich metody nadtříd. Zde se jedná o stejný princip - pro naši třídu Direction můžeme pozměnit chování sčítání, aby si s ní dokázalo poradit.&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__add__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;other&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;other&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Říkáme touto metodou: &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Pythone, pokud dostaneš dva objekty třídy Direction, vezmi atribut
+&lt;em&gt;value&lt;/em&gt; obou těchto objektů, sečti je, a vrať objekt třídy Direction, jehož &lt;em&gt;value&lt;/em&gt; je zbytkem dělení provedeného součtu čtyřmi. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Proč zbytek z dělení? Máme čtyři validní směry a chceme, aby se součet "přesypal" přes nulu, místo aby se dostal do hodnot nad 4.&lt;/p&gt;
+&lt;p&gt;Když nyní zkusíme sečíst dva směry, dosáhneme stejného výsledku jako výše, při výrazné zvýšení čitelnosti zápisu. &lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;BACK&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;Direction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;LEFT&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;   &lt;span class="c1"&gt;# Direction.RIGHT&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content></entry><entry><title>Devátý sraz - Upravujeme a navrhujeme</title><link href="https://roboprojekt.pyladies.cz/devaty-sraz-upravujeme-navrhujeme" rel="alternate"></link><published>2018-11-27T18:00:00+01:00</published><updated>2018-11-27T18:00:00+01:00</updated><author><name>Anežka Müller</name></author><id>tag:roboprojekt.pyladies.cz,2018-11-27:/devaty-sraz-upravujeme-navrhujeme</id><summary type="html">&lt;div&gt;&lt;p&gt;Na začátku srazu jsme dokončovaly řešení dlouhotrvajícího problému, jak na políčka, která umí ve hře hromadu věcí. Mimo jiné políčka mohou mít zdi, které neblokují jen robota v pohybu, ale zejména nás docela blokovaly v dalším vývoji, protože jsme nevěděly, jak na ně. Řešení padlo na &lt;a href="https://roboprojekt.pyladies.cz/osmy-sraz-malo-ukolu"&gt;minulém srazu&lt;/a&gt;, tedy vyřešit …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;Na začátku srazu jsme dokončovaly řešení dlouhotrvajícího problému, jak na políčka, která umí ve hře hromadu věcí. Mimo jiné políčka mohou mít zdi, které neblokují jen robota v pohybu, ale zejména nás docela blokovaly v dalším vývoji, protože jsme nevěděly, jak na ně. Řešení padlo na &lt;a href="https://roboprojekt.pyladies.cz/osmy-sraz-malo-ukolu"&gt;minulém srazu&lt;/a&gt;, tedy vyřešit efekty políčka tím, že každé políčko bude mít typ a vlastnosti definované přímo v popisu při tvorbě mapy a budou pak součástí výstupu v JSON. Odtud se budou dát načíst pro použití ve hře, potřebná data pak bude obsahovat třída &lt;code&gt;Tile&lt;/code&gt;, kterou je o ně třeba rozšířit. Tím se pak mohou řešit i zdi, tedy třída &lt;code&gt;Tile&lt;/code&gt; může obsahovat metodu ověřující, zda se lze pohnout z daného políčka nebo na dané políčko. Až to bude fungovat, můžeme se pustit do dalších efektů.&lt;/p&gt;
+&lt;p&gt;Poté jsme se posunuly k úpravám stávajícího kódu. První věc jsme si ukazovaly na příkladu načítání vstupu. Obecně je dobré psát programy tak, aby byly univerzálnější. V současnou chvíli naše hra pracuje pouze s formátem dat v JSON. Z JSON získáváme slovník &lt;code&gt;data&lt;/code&gt; obsahující hromadu informací, které pak dál zpracováváme v různých funkcích, a také z něj získáváme konkrétnější informace. Pokud bychom chtěly pracovat s jiným vstupem, bude obtížnější tuto část kódu měnit, protože má více výstupů. &lt;strong&gt;Je dobré stavět program z částí, které je možné jednoduše vyměnit.&lt;/strong&gt; V našem případě by tedy bylo ideální mít funkci, která dostane jako vstup jméno souboru a vrátí stav hry. Vše, co potřebujeme používat v kódu dál, by měl stav hry obsahovat. Cílem je stavět program z celků, které jsou na sobě více nezávislé. Stavebních bloků, které mají jeden vstup a jeden výstup. Toto budeme v naší hře aplikovat tím, že oddělíme část, která načítá data, do samostatného modulu, nebude tedy součástí backendu, a také budeme psát komplexnější funkce. Abychom si zajistily, že používáme minimální rozhraní, jen to, co je skutečně nutné, bylo by dobré importovat přímo funkce, ne celé moduly. 
+Důležité je také vyhnout se cyklickým importům. To se nám stalo při načítání konstant. Řešením pro tento případ může být vytvoření separátního modulu s konstantami, abychom se vyhnuly problému, ve kterém ze stávajících modulů je mít, aby vše fungovalo bez problémů. Není také zpravidla dobré importovat v rámci funkce, většinou bývají lepší možnosti. &lt;/p&gt;
+&lt;p&gt;V rámci úprav a oprav byla také zmíněna &lt;strong&gt;reprezentace směru&lt;/strong&gt;. Nyní máme v kódu směr reprezentovaný stupni a čísly. Když je zkombinujeme se směry otočení (doleva, doprava, o 180°), veškerý pohyb, který pro hru potřebujeme, reprezentuje je tato tabulka:&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="tabulka" src="./images/tabulka.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;V backendu se objevil následující if:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;if direction == 0:
+    y += distance
+elif direction == 90:
+    x += distance
+elif direction == 180:
+    y -= distance
+elif direction == 270:
+    x -= distance
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Lepší provedení by bylo pomocí třídy otočení, která by uměla věci znázorněné v tabulce. Je třeba se rozmyslet, co bude lepší jako atribut a co jako metoda. Vytvoření této třídy je jeden z úkolů do příště. &lt;/p&gt;
+&lt;p&gt;Po úpravách a vylepšeních jsme se dostaly k dalšímu vývoji. Úkolem z minulého setkání bylo navrhnout pro naši hru &lt;strong&gt;rozhraní&lt;/strong&gt;. Sešlo se několik nápadů, nejpropracovanější návrh přinesla Katka:&lt;/p&gt;
+&lt;p&gt;&lt;a href="./images/rozhrani.jpg" target="_blank" title="rozhrani"&gt;&lt;img alt="rozhrani" src="https://roboprojekt.pyladies.cz/images/thumbnails/rozhrani.jpg" class="img-fluid img-rounded"&gt;
+&lt;/a&gt;&lt;a href="./images/rozhrani_2.jpg" target="_blank" title="rozhrani_2"&gt;&lt;img alt="rozhrani_2" src="https://roboprojekt.pyladies.cz/images/thumbnails/rozhrani_2.jpg" class="img-fluid img-rounded"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Petr přišel s návrhem, že by bylo dobré mít dvě nezávislá okénka, jedno čistě na zobrazení mapy a druhé s interaktivní částí, kde se hra ovládá. Má to několik výhod, ať už při prezentaci projektu nebo jeho tvorbě - separátně se to bude lépe kreslit a také udržovat oddělené. Vykreslení mapy už máme, v tuto chvíli je tedy potřeba zkusit napsat program, který vykreslí (zatím statickou) verzi interaktivního rozhraní. Jako pracovní postup Petr navrhoval nakreslit si novou část v Inkscape pro představu, jak celá věc bude vypadat na obrazovce, a až pak začít kódovat.&lt;/p&gt;
+&lt;p&gt;V rámci rozhraní jsme také řešily, jakým způsobem se budou vybírat karty. Možností je více, přetažení myší, výběr pořadí karty stiskem čísla na klávesnici, kdy se pak karta automaticky posune na první volné místo v registru, nebo kliknutí nejprve na kartu a poté na požadovanou pozici.&lt;/p&gt;
+&lt;p&gt;Součástí hry by mohl být i výběr robota, kde by se ke každému krom jeho obrázku ukazoval i krátký text, příběh daného robota. Padaly i nápady do budoucna, například práce se skrýváním karet nebo speciální vlastnosti robotů, to ale pro tuto chvíli řešit nebudeme :)&lt;/p&gt;
+&lt;p&gt;Na závěr jsme se bavily také o &lt;strong&gt;licenci&lt;/strong&gt;, kterou by náš projekt měl mít. Jako autorky projektu si ji můžeme samy zvolit. Musíme se tedy rozhodnout, jak chceme, aby náš projekt lidi používali a co s ním budou moci dělat. Budeme se rozhodovat mezi dvěma druhy open source licencí, které se liší podle toho, pod jakou licencí může daný projekt kdokoliv další rozšiřovat. Na tomto se tedy musíme také v dohledné době dohodnout.&lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>Osmý sraz - Málo úkolů?</title><link href="https://roboprojekt.pyladies.cz/osmy-sraz-malo-ukolu" rel="alternate"></link><published>2018-11-20T18:00:00+01:00</published><updated>2018-11-20T18:00:00+01:00</updated><author><name>Terezie Vahalová</name></author><id>tag:roboprojekt.pyladies.cz,2018-11-20:/osmy-sraz-malo-ukolu</id><summary type="html">&lt;div&gt;&lt;p&gt;Sraz začal tématem &lt;strong&gt;Máme málo úkolů&lt;/strong&gt;. Takže se Petr trochu rozjel a začal psát jeden Issue za druhým.&lt;/p&gt;
+&lt;p&gt;Problém je, že některé úkoly můžeme začít dělat, až po dodělání jiných. Na to nám v GitHubu založil štítek &lt;strong&gt;blocked&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Veškerý další vývoj teď stojí na úkolu &lt;strong&gt;Předělat strukturu dat.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Aktuálně máme …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;Sraz začal tématem &lt;strong&gt;Máme málo úkolů&lt;/strong&gt;. Takže se Petr trochu rozjel a začal psát jeden Issue za druhým.&lt;/p&gt;
+&lt;p&gt;Problém je, že některé úkoly můžeme začít dělat, až po dodělání jiných. Na to nám v GitHubu založil štítek &lt;strong&gt;blocked&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Veškerý další vývoj teď stojí na úkolu &lt;strong&gt;Předělat strukturu dat.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Aktuálně máme mapu vyřešenou ve slovnících po vrstvách. Ke každé souřadnici ve vrstvě mapy je přiděleno jedno políčko a to včetně prázdných políček. Vhodnější je ale zápis obrátit. Pro každou souřadnici vytvořit seznam všech políček, co na ni jsou a nepřidávat do seznamu prázdná políčka &lt;code&gt;board = {(x,y):[Tile, Tile, Tile],… }&lt;/code&gt;. Po předělání struktury dat, se nám bude lépe určovat efekt políčka a nemusíme kvůli zjišťování všech efektů políčka procházet všechny vrstvy mapy.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Dopsat &lt;code&gt;__repr__&lt;/code&gt; do tříd&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Aktuálně se nám printované výstupy z funkcí zobrazují ve velice nehezkém formátu&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;{(0, 11): [&amp;lt;backend.Tile object at 0x7f10c49297f0&amp;gt;],… }&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Aby byla práce příjemnější, je potřeba použít metodu &lt;code&gt;__repr__&lt;/code&gt;, která nám převede výstupy z tříd do lidsky čitelného formátu.  &lt;/p&gt;
+&lt;p&gt;Např. úprava:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Tile&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;  
+&lt;span class="o"&gt;...&lt;/span&gt;  
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__repr__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;  
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;'&amp;lt;Tile {} {}&amp;gt;'&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fomat&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rotation&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;zformátuje původní slovník na: &lt;code&gt;{(0, 11): [&amp;lt;Tile 0 ./img/squares/png/ground.png&amp;gt;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Efekty políček přidat do mapy jako "properties"&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;V Tiled je potřeba u každého obrázku, který mapa používá, nastavit typ políčka. Tato informace se nám pak přenese do jsonu a můžeme s ní dál pracovat.&lt;br&gt;
+Typ políčka nastavíme jako “ground”, “hole”,… u některých je potřeba ještě typ doplnit o další vlastnosti (Custom Properties) jako třeba u pásů, o kolik se posunou =&amp;gt; int, u laserů počet a bool varianta pro start laserů, u otáčecího políčka směr…&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="tiled" src="./images/tiled.png" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;Validace mapy&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;U mapy potřebujeme zkontrolovat, že jsou všechny prvky správně umístěny nad sebou. Na mapě nemusí být vidět vše. Destrukční políčky by mohla být omylem schována pod jiná a efekt by se provel i když by nebyl na mapě “vidět”. Validační program/test potvrdí, že díry, lasery a ostatní efektní políčka jsou ve správném pořadí a budou na mapě vidět.&lt;/p&gt;
+&lt;p&gt;V případě, že mapa správně nebude, program vyhodí chybu ideálně i se souřadnicí, kde je potřeba udělat opravu.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Udělat pohyb robota – metodu "Robot.posuň se" z diagramu&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Úkolem je vymyslet metodu třídy Robot, která posune robota dopředu.
+Metoda by měla brát stav a vzdálenost a vytvořit nový stav. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Automaticky exportovat PNG obrázky&lt;/strong&gt; &lt;/p&gt;
+&lt;p&gt;Úkolem je udělat program, který při spuštění vygeneruje z svg obázků všechny png obrázky, které ještě nemáme. Tím si ulehčíme práci při přidávání dalších obrázků.&lt;/p&gt;
+&lt;p&gt;Vzorový program pro jeden obrázek vypadá takto:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;    &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+    &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;subprocess&lt;/span&gt;  
+    &lt;span class="err"&gt;​&lt;/span&gt;
+    &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'inkscape'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'img/robots_map/svg/MintBot.svg'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+         &lt;span class="s1"&gt;'--export-png=ex.png'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'--export-area-page'&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+        &lt;span class="n"&gt;check&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;V příkazové řádce pak spustíme program:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;$inkscape svg/MintBot.svg --export-png=ex.png --export-area-page
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Úkolů máme pro příští týden hodně a navíc ještě máme každá vymyslet a nakreslit grafické rozhraní pro hru.&lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>Šestý sraz - Travis CI</title><link href="https://roboprojekt.pyladies.cz/sesty-sraz-travis-ci" rel="alternate"></link><published>2018-11-06T21:17:00+01:00</published><updated>2018-11-16T21:17:00+01:00</updated><author><name>Zuzana Kletzanderová</name></author><id>tag:roboprojekt.pyladies.cz,2018-11-06:/sesty-sraz-travis-ci</id><summary type="html">&lt;div&gt;&lt;p&gt;V úvodu našeho dalšího srazu jsme si ujasnily komunikaci týmu kolem celého projektu. Hlavní bod diskuze - neurážej se kvůli opravě tvého kódu! :) Dále aby byl lepší přehled o tom kdo na čem pracuje, v jakém je to stavu a aby byl &lt;em&gt;celkově&lt;/em&gt; lepší přehled co se v projektu děje, jsme …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;V úvodu našeho dalšího srazu jsme si ujasnily komunikaci týmu kolem celého projektu. Hlavní bod diskuze - neurážej se kvůli opravě tvého kódu! :) Dále aby byl lepší přehled o tom kdo na čem pracuje, v jakém je to stavu a aby byl &lt;em&gt;celkově&lt;/em&gt; lepší přehled co se v projektu děje, jsme se domluvily, že budeme vše řešit především na Slacku.&lt;/p&gt;
+&lt;p&gt;Hlavním bodem našeho setkání bylo, pod vedením Jirky, jak funguje integrace GitHub-u a jak nám pomůže v testování &lt;strong&gt;Travis CI&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Ze začátečnického kurzu už víme, jak může vypadat test na kód, který napíšeme. Například pomocí příkazu 'assert'. Testy rozdělujeme na manuální a automatické (pytest). Hlavní je to, že testy umožňují říct, zda je kód v pořádku, nebo jestli s ním musíme dále něco dělat. S testy nečekáme až bude finální verze, ale testujeme už jednotlivé změny, které děláme.&lt;/p&gt;
+&lt;p&gt;A teď něco k &lt;strong&gt;Travis CI&lt;/strong&gt; (Continuous Integration):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;je to služba, která spouští automatizované testy na GitHubu, které běží kontinuálně s tím co jsme na GitHub-u přidaly &lt;/li&gt;
+&lt;li&gt;&lt;a href="https://travis-ci.org"&gt;travis-ci.org&lt;/a&gt; má službu poskytovanou zdarma pro veřejné repozitáře, &lt;a href="https://travis-ci.com"&gt;travis-ci.com&lt;/a&gt; je placená verze pro privátní účely&lt;/li&gt;
+&lt;li&gt;a co Travis dělá? Travis si na testování vytvoří virtuální počítač, stáhne si zdrojový kód a v rámci zdrojového kódu provede příkazy, které chceme&lt;/li&gt;
+&lt;li&gt;Travis se konfiguruje pomocí souboru &lt;code&gt;.travis.yml&lt;/code&gt; umístěným v kořenovém adresáři projektu. V souboru je uvedeno vše potřebné pro správné spuštění testů, včetně instalace závislostí atd. Mimo jiné se jedná o jazyk pro jaký se má nastavit prostředí, v jaké verzi (těch může být kolik potřebujeme), instalace závislostí (v našem případě pythoních modulů) a skript,  který po spuštění provede všechny testy. &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Toto je příklad, který  použijeme v našem RoboProjektu:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;language&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;python&lt;/span&gt;
+&lt;span class="n"&gt;python&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s1"&gt;'3.5'&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s1"&gt;'3.6'&lt;/span&gt;
+&lt;span class="n"&gt;install&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;pip&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="n"&gt;requirements&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;txt&lt;/span&gt;
+&lt;span class="n"&gt;script&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;pytest&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Po spuštění testu na &lt;a href="https://travis-ci.org"&gt;travis-ci.org&lt;/a&gt; můžeme vidět , zda test proběhl správně, nebo jestli někde nastala chyba. Na pravé straně vidíme &lt;strong&gt;My repositories&lt;/strong&gt;,  kde je přehled našich testů. Po rozkliknutí testu vidíme, že proběhla změna např. na větvi &lt;strong&gt;master&lt;/strong&gt;, kdo změnu vytvořil, jak dlouho test trval, kdy byl vytvořen atd. Když máme test ve více verzích apod., tak se nám zobrazí &lt;strong&gt;Build jobs&lt;/strong&gt;, kde vybereme pro nás vhodný výběr např. verze Pythonu. Poté máme k dispozici také &lt;strong&gt;Job log&lt;/strong&gt;, který vygeneruje x řádků s tím, že většina jich je servisních, v první části vidíme server, kde byl test spuštěn, pak klon kódu z GitHub-u a instrukce které jsou dány ze souboru '.travis.yml'. V další části už je test, kde vidíme, zda test prošel (s chybou 0) a jak dlouho trval, nebo se zobrazí chyba.&lt;/p&gt;
+&lt;p&gt;Postup pro spuštění Travis CI je tedy:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;jdeme na &lt;a href="https://travis-ci.org"&gt;travis-ci.org&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;přihlásíme se přes &lt;a href="https://github.com"&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;zapneme webhook pro repozitář (tím zapneme integraci mezi GitHub-em a Travis CI), nebo proběhne automaticky&lt;/li&gt;
+&lt;li&gt;teď kliknout na tlačítko Aktivace a vybereme repozitáře z GitHub-u, které chceme používat s Travis CI&lt;/li&gt;
+&lt;li&gt;přidáme soubor &lt;code&gt;.travis.yml&lt;/code&gt; do git-u, dáme commit a push &lt;/li&gt;
+&lt;li&gt;zkontrolujeme na Travis CI stav&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Testy, které proběhly,  můžeme vidět na GitHub-u v seznamu commitů. Když někdo udělá Pull Request, tak jde vidět, jestli testy procházejí správně nebo ne.&lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>Pátý sraz - první důležité úkoly</title><link href="https://roboprojekt.pyladies.cz/paty-sraz-enum-dataclasses" rel="alternate"></link><published>2018-10-30T18:00:00+01:00</published><updated>2018-11-06T09:58:00+01:00</updated><author><name>Iveta Česalová</name></author><id>tag:roboprojekt.pyladies.cz,2018-10-30:/paty-sraz-enum-dataclasses</id><summary type="html">&lt;div&gt;&lt;p&gt;Z předminulé hodiny s Petrem jsme měly za úkol vytvořit slovník políček (STAV = slovník políček klíč: (x, y) hodnota: seznam efektů) a vykreslit v Pygletu mapu s jednou vrstvou bez otáčení prvků. Jelikož spousta z nás s tím měla problémy, probrali jsme na začátku srazu krok po kroku jak na …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;Z předminulé hodiny s Petrem jsme měly za úkol vytvořit slovník políček (STAV = slovník políček klíč: (x, y) hodnota: seznam efektů) a vykreslit v Pygletu mapu s jednou vrstvou bez otáčení prvků. Jelikož spousta z nás s tím měla problémy, probrali jsme na začátku srazu krok po kroku jak na to.
+Na githubu byly nahrané dvě verze kódu, od Terky a Karoliny, které úkol zvládly. Zvolili jsme ponechat &lt;a href="https://github.com/PyLadiesCZ/roboprojekt/blob/35a98aa967386d82a4dbca23a0ade65cc8b96767/karolina_state.py"&gt;Karolinin kód&lt;/a&gt;.
+Postupně jsme procházely, co je v kódu a Petr zmínil, co je třeba opravit (sjednotit terminologii, pojmenování proměnných, správně přeložit do angličtiny, stejně jako komentáře…)&lt;/p&gt;
+&lt;p&gt;A nastala otázka - Co dál? Jak si rozdělíme úkoly?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Načíst mapu s více vrstvami&lt;/li&gt;
+&lt;li&gt;Načíst mapu s otočenými políčky&lt;/li&gt;
+&lt;li&gt;Napsat testy&lt;/li&gt;
+&lt;li&gt;Celý dosavadní kód rozdělit na jednotlivé funkce&lt;/li&gt;
+&lt;li&gt;Popisek základního repozitáře v Githubu&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Důležitou věcí, jak pokračovat v našem projektu je jeho rozdělení na 4 moduly:
+&lt;strong&gt;Backend&lt;/strong&gt; – načte mapu, tedy náš slovník Stav, &lt;strong&gt;Frontend&lt;/strong&gt; – vykreslí mapu, &lt;strong&gt;Game&lt;/strong&gt; – spustí hru, &lt;strong&gt;Testy&lt;/strong&gt; – vyzkouší, jestli funguje, co je v backendu.
+Až budou tyto moduly hotové, smažeme původní script  kde je celý kód.&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="moduly" src="./images/moduly.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;V další části jsme se naučily něco nového, využití knihoven &lt;strong&gt;enum&lt;/strong&gt; a &lt;strong&gt;dataclasses&lt;/strong&gt;. Kdo neměl nainstalované, použil v příkazovém řádku následující příkazy:
+&lt;code&gt;python -m pip install dataclasses&lt;/code&gt;
+&lt;code&gt;python -m pip install enum&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Tyto knihovny nám umožní jednodušeji psát výčtové typy a datové třídy. Kdo nezná třídy, zopakuje si ze začátečnického kurzu &lt;a href="https://naucse.python.cz/course/pyladies/sessions/class/"&gt;Třídy&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Poté jsme v editoru vytvořily nový soubor – demo.py kde máme třídu Direction, která dědí z výčtového typu enum.Enum. Definovaly jsme si funkci, která vyhodnotí směr (nejdřív se sečtou hodnoty a zbytek po dělení 4 =&amp;gt; získáme směr).&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="demo" src="./images/demo.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;Dále následovalo vysvětlování modulu &lt;strong&gt;dataclasses&lt;/strong&gt;. Tento modul poskytuje dekorátor a funkce pro automatické přidávání generovaných speciálních metod, jako jsou &lt;code&gt;__init__()&lt;/code&gt; a &lt;code&gt;__repr__()&lt;/code&gt; do uživatelsky definovaných tříd. 
+Vytvořily jsme si soubor demo_dataclasses.py, kde máme třídu datového typu. Karta má jednotlivé vlastnosti (prioritu, efekt) určitého typu.
+Více informací o dataclasses &lt;a href="https://docs.python.org/3/library/dataclasses.html"&gt;zde&lt;/a&gt;
+Nevím, jak to pochopily ostatní, ale asi nám to Petr ještě dovysvětlí, k čemu to přesně slouží :-)&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="dataclasses" src="./images/dataclasses.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;Do příště máme každá svůj úkol, rozdělení máme na githubu v záložce Issues.&lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>Čtvrtý sraz - GitHub</title><link href="https://roboprojekt.pyladies.cz/ctvrty-sraz-github" rel="alternate"></link><published>2018-10-23T18:05:00+02:00</published><updated>2018-11-06T18:05:00+01:00</updated><author><name>Hanka Střondalová</name></author><id>tag:roboprojekt.pyladies.cz,2018-10-23:/ctvrty-sraz-github</id><summary type="html">&lt;div&gt;&lt;p&gt;A jsme zpět. Co dnes? užitečný a u začátečníků respekt vzbuzující ... GIT... Abychom mohly naplno rozjet náš projekt, potřebujeme si naše kódy sdílet jako opravdové programátorky.&lt;/p&gt;
+&lt;p&gt;Tentokráte se hodiny ujal Jirka a začal to jak se patří a to malým opáčkem. V rychlosti jsme si s ním projely informace, které …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;A jsme zpět. Co dnes? užitečný a u začátečníků respekt vzbuzující ... GIT... Abychom mohly naplno rozjet náš projekt, potřebujeme si naše kódy sdílet jako opravdové programátorky.&lt;/p&gt;
+&lt;p&gt;Tentokráte se hodiny ujal Jirka a začal to jak se patří a to malým opáčkem. V rychlosti jsme si s ním projely informace, které jsme už dříve obdržely jako účastnice základního kurzu, ale co si budeme povídat - připomenutí se hodí vždy: git init, git status, git add, git commit, pozor změna - git diff, užitečný git log, grafický pomocníček gitk. To hlavní, k čemu jsme dnes směřovaly, je spolupráce na GitHub.&lt;/p&gt;
+&lt;p&gt;Jirka nám vysvětloval pomalu a jistě (to abychom mu hned na začátku asi neutekly - nebo po něm něco rovnou nehodily :-)), že hlavními výhodami pro nás na GitHubu bude mergovaní našich výtvorů a nápadů. Každou větev (branch), kterou si uděláme a která bude obsahovat naše změny a nápady, prostřednictvím GitHubu někdo další zkontroluje a spojí, takže výsledek budeme mít každá k dispozici z pohodlí svého gauče.&lt;/p&gt;
+&lt;p&gt;Něco málo o GitHubu:
+Samotný repozitář nemáme pouze na svém počítači a tudíž je pravděpodobnost, že o něj s odchodem našich notebooků do křemíkového nebe, nepřijdeme.
+GitHub je možno využívat zdarma a samozřejmě i v placené verzi, což zatím nepotřebujeme. Je zde také možná spolupráce dvojího typu - "firemní" a "open source" - u firemní spolupráce máme větší práva a naše změny jsou zaslány rovnou do hlavního repozitáře (git push). U open source spolupráce se musí naše změny nejdříve zaslat do našeho forku (git push [mé jméno]) a odsud následně pomocí Pull Request bude začleněno do hlavního repozitáře.)&lt;/p&gt;
+&lt;p&gt;Jirka nám GitHub představil pomalu a po kouscích - vysvětlil nám, kde co v grafickém rozhraní najdeme a co to všechno znamená.&lt;/p&gt;
+&lt;p&gt;Jednou ze záložek jsou například Issues neboli úkoly: každý má své číslo, můžeme je filtrovat podle různých parametrů - podle autora, milestone či assignees, což nám říká, komu byl úkol přidělen.&lt;/p&gt;
+&lt;p&gt;Hlavním bodem večera byl "pull request". Projely jsme postupně celý proces krok po kroku, a abychom si to řádně vyzkoušely, vytvořily jsme si i testovací organizaci, kde se nemusíme bát, že něco pokazíme.&lt;/p&gt;
+&lt;p&gt;Pro “firemní” spolupráci:
+Nejdříve je třeba provést klonování repozitáře, které provedeme pomocí zeleného tlačítka Clone or Download - to je možné dvojím způsobem buď přes SSH key (programátorům se nechce pořád dokola přihlašovat, tak mají klíč :-)) a nebo přes HTTPS adresu, kterou budeme využívat my.
+HTTPS adresu zkopírujeme a do příkazové řádky zadáme git clone &lt;em&gt;https://github.com/název&lt;/em&gt;, tímto nám proběhne naklonování repozitáře k nám na počítač. Tam provádíme libovolné změny, o které se zrovna chceme podělit se svým týmem. Pomocí příkazů git status si zobrazíme stav souborů v repozitáři a cokoliv, co je nové, přidáme (git add) a okomentujeme změny (git commit). Klidně pro klid duše použijeme znovu příkaz git status. Po kontrole se  můžeme  posunout dál a poslat naši změnu na GitHub. Master branch (větev) je chráněna a taknemůžeme posílat naše změny napřímo, ale musíme si vytvořit větev vlastní. Použijeme příkaz git push origin src:dst (zdrojová:cílová větev), například git push origin master:pridani_vlajky. Následně jsme  vyzváni k přihlášení pomocí našeho uživatelského jména a hesla.&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="master - pridani_vlajky" src="./images/kod.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;K vytvoření pull requestu je třeba otevřít web GitHubu a v našem repozitáři si zavolat na pomoc tlačítko Compare &amp;amp; Pull request&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="Compare &amp;amp; Pull request" src="./images/comparepull.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;Zobrazí se prostor na naše poznámky a zároveň můžeme pull requestu přiřadit další parametry, můžeme určit uživatele, kteří pro nás udělají review aneb kontrolu změn.
+Dokončíme pull request (Create pull request) a čekáme na potvrzení, zda nedochází ke kolizi a kontrolu našich "assignees", které (kteří) následně potvrdí sloučení naší změny s cílovým repozitářem (confirm merge). Pokud bychom ještě něco ve svém repozitáři /na své větvi před mergem měnily, je dobré tyto změny ukládat do té samé větve.  Po definitivním sloučení větví je fajn po sobě uklízet a naši větev smazat.&lt;/p&gt;
+&lt;p&gt;Když se repozitář na GitHubu průběžně mění a chceme si aktualizovat i svůj repozitář v počítači, použijeme k tomu příkaz git pull.
+“Open source” přístup je trochu jiný. Začíná se tím, že dáme na GitHubu fork, do počítače si naklonujeme repozitář pomocí stejného příkazu git clone &lt;em&gt;https://github.com/název&lt;/em&gt;.
+V příkazové řádce se přepnu do naklonované složky a pomocí git remote add [me jmeno] &lt;em&gt;https://github.com/[me jmeno]/naklonovaný repozitář&lt;/em&gt;, si vytvoříme náš fork (stačí jednou na začátku). U sebe na počítači si vytvoříme novou větev a do ní ukládáme změny, obrázky, kódy a podle potřeby přidáváme do gitu (git add) a uděláme commit.
+Následuje git push [me jmeno] -  čímž se na mém githubu objeví možnost pull requestu a zbytek už znáte :-)&lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>Třetí sraz - pokračujeme s UML a začínáme s grafikou</title><link href="https://roboprojekt.pyladies.cz/treti-sraz-pokracujeme-s-uml-a-zaciname-s-grafikou" rel="alternate"></link><published>2018-10-16T08:39:00+02:00</published><updated>2018-10-24T08:39:00+02:00</updated><author><name>Helena Olbertová</name></author><id>tag:roboprojekt.pyladies.cz,2018-10-16:/treti-sraz-pokracujeme-s-uml-a-zaciname-s-grafikou</id><summary type="html">&lt;div&gt;&lt;p&gt;V první části dvouhodinovky jsme se věnovaly aktivní týmové spolupráci při rozebírání &lt;a href="https://en.wikipedia.org/wiki/Class_diagram"&gt;diagramu tříd&lt;/a&gt; pro pohyb robotů, který máme rozdělaný už od minula. Poslední verzi nám Petr zase trošku zkorigoval a dál budeme na diagramu pracovat doma a příště. Aktuální diagram najdete tady:&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;a href="./images/UML1.jpg" target="_blank" title="UML1"&gt;&lt;img alt="UML1" src="https://roboprojekt.pyladies.cz/images/thumbnails/UML1.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/a&gt;&lt;/figure&gt;
+&lt;figure class="figure"&gt;&lt;a href="./images/UML2.jpg" target="_blank" title="UML2"&gt;&lt;img alt="UML2" src="https://roboprojekt.pyladies.cz/images/thumbnails/UML2.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/a&gt;&lt;/figure&gt;
+&lt;p&gt;V druhé části dvouhodinovky přišla na řadu …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;V první části dvouhodinovky jsme se věnovaly aktivní týmové spolupráci při rozebírání &lt;a href="https://en.wikipedia.org/wiki/Class_diagram"&gt;diagramu tříd&lt;/a&gt; pro pohyb robotů, který máme rozdělaný už od minula. Poslední verzi nám Petr zase trošku zkorigoval a dál budeme na diagramu pracovat doma a příště. Aktuální diagram najdete tady:&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;a href="./images/UML1.jpg" target="_blank" title="UML1"&gt;&lt;img alt="UML1" src="https://roboprojekt.pyladies.cz/images/thumbnails/UML1.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/a&gt;&lt;/figure&gt;
+&lt;figure class="figure"&gt;&lt;a href="./images/UML2.jpg" target="_blank" title="UML2"&gt;&lt;img alt="UML2" src="https://roboprojekt.pyladies.cz/images/thumbnails/UML2.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/a&gt;&lt;/figure&gt;
+&lt;p&gt;V druhé části dvouhodinovky přišla na řadu tvorba grafiky. Zatímco vymýšlíme, jak se budou naše herní figurky hýbat, musíme jim také připravit herní podklad. K tomuto účelu používáme pro tvorbu vektorové grafiky &lt;a href="https://inkscape.org/"&gt;Inkscape&lt;/a&gt; a pro skládání dlaždic do mapy &lt;a href="https://www.mapeditor.org/"&gt;Tiled&lt;/a&gt; (ideálně verzi 1.2 a novější).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Inkscape&lt;/strong&gt; jsme si nastavily všechny stejně.
+Soubor → Nastavení dokumentu (nebo Ctrl + Shift + D) → Zobrazovací jednotky a Jednotky plátna nastaveno na px → velikost 64px x 64px.&lt;/p&gt;
+&lt;p&gt;V tom stejném nastavení přidáme mřížku - třetí záložka Grids → nová čtvercová mřížka → Počátek X = 0, Počátek Y = 0, Mezery X = 1, Mezery Y = 1, Hlavní čára mřížky každých: 8&lt;/p&gt;
+&lt;p&gt;Prvně zkoušíme, jak se v Inkscape kreslí tužkou a vyplňuje obvod a obsah. Potom každá Pylady dostala za úkol nějaký typ dlaždice, celkově jsme zatím připravily tyhle typy dlaždic:
+wall, flag, starting square, laser, laser base, pusher, repair, hole, ground, conveyor belt 1, conveyor belt 2.&lt;/p&gt;
+&lt;p&gt;Všechny ukládáme ve vektorovém formátu SVG a navzájem si je sdílíme na Slacku, takže všechny máme k dispozici stejnou sadu dlaždic, kterou si ukládáme do složky Tiles. Nejsou to ještě konečné verze grafiky, ale už nám pomůžou orientačně rozložit mapu. Později budeme mít možnost je snadno nahradit nějakými více vychytanými s jednotnějším vzhledem.&lt;/p&gt;
+&lt;p&gt;Alternativně, protože na některých operačních systémech takto uložené soubory zlobí (vykreslují se v Tiled se špatnou velikostí), se mohou obrázky z Inkscape vyexportovat do PNG. V menu Soubor najdeme Export PNG Image a na zobrazené boční liště vybereme tlačítka Page a Export. Takto vyexportované soubory se jednoduše naimportují do Tiled dle návodu níže.&lt;/p&gt;
+&lt;p&gt;A teď hurá na druhý prográmek – &lt;strong&gt;Tiled&lt;/strong&gt;.
+Dáme si Soubor → New → New Map (Ctrl + N), kde nastavíme
+Orientace: ortogonální,
+Formát vrstvy dlaždic: CSV,
+Pořadí vykreslování dlaždic: Doprava a dolů,
+Velikost mapy – Fixed 12 x 12 dlaždic,
+Velikost dlaždice: 64 px x 64 px.
+Projekt uložíme s libovolným názvem a koncovkou &lt;a href="https://naucse.python.cz/course/pyladies/intro/json/"&gt;JSON&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Pokračujeme s importem našich dlaždic.
+Vpravo dole najdeme oddíl Sada dlaždic a stisknutím New Tileset pokračujeme na výběr názvu sady – dáváme „Robots“ a možnost Ze sady obrázků.
+Vpravo dole pod oddílem dlaždic klikáme na malinkou ikonu s klíčem, na popisku stojí Edit Tileset. To nám otevírá novou záložku, kde v horní liště klikneme na ikonku + s popiskem Přidání dlaždic. Najdeme adresu naší složky Tiles a označíme všechny obrázky dlaždic.
+Vracíme se do záložky s mapou a můžeme si trošku pohrát s naší první herní mapou. Z vektorové grafiky jsme získaly obrázky s průhledným pozadím a tak je můžeme pěkně vrstvit. Do spodní vrstvy se můžou dát třeba země, jáma, … Do další vrstvy další dlaždice typu zeď, posuvné pásy, lasery a podobně.
+Jednotlivé objekty je možné i libovolně otáčet.
+Náš výtvor můžeme nechat přes Soubor → Exportovat jako a nastavíme si typ JSON.&lt;/p&gt;
+&lt;p&gt;Další část lekce jsme věnovaly průzkumu mapového souboru JSON v textovém editoru.&lt;/p&gt;
+&lt;p&gt;Každý typ dlaždice má svoje ID – první má číslo 0 a je to abecedně název první dlaždice, další následují. V seznamu políček ale vidíme čísla typů dlaždic od 1, takže abecedně první typ dlaždice je v Tiled ID: 0 → v seznamu vidíme ID: 1.&lt;/p&gt;
+&lt;p&gt;Teď se můžeme podívat do organizace vrstev – v Layers máme tentokrát jenom jednu vrstvu. Každé políčko mapy má svoje souřadnice – čísla běží jako seznam z levého horního rohu mapy doprava a pak následuje další řádek.&lt;/p&gt;
+&lt;p&gt;Pokud máme komplikovanější mapu s více vrstvami a také otočenými dlaždicemi, můžeme v layers vidět více seznamů a v některých budou i veliká čísla, jako například 1610612738. To je číslo šestnáctkové soustavy. Rozluštit nám ho pomůže třeba Python přes příkaz hex(číslo).  &lt;/p&gt;
+&lt;p&gt;Máme pro první řádek mapy například políčka:&lt;/p&gt;
+&lt;p&gt;nic – dlaždice ID:1 (conveyor belt 2) – nic – ID 1 otočené doprava – nic - ID 1 otočené dolů – nic – ID 1 otočené doleva – nic - nic – nic- nic&lt;/p&gt;
+&lt;p&gt;Zápis vypadá takto&lt;/p&gt;
+&lt;p&gt;"data":[0, 2, 0, 2684354562, 0, 3221225474, 0, 1610612738, 0, 0, 0, 0 … a následují další řádky&lt;/p&gt;
+&lt;p&gt;zadáme do Pythonu:&lt;/p&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;cislo&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2684354562&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="nb"&gt;hex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cislo&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="s1"&gt;'0xa0000002'&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;cislo&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="mh"&gt;0xFFFFFFF&lt;/span&gt; &lt;span class="c1"&gt;# kouzelná formulka pro zjištění ID dlaždice&lt;/span&gt;
+&lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;cislo&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# kouzelná formulka pro zjištění otočení&lt;/span&gt;
+&lt;span class="mi"&gt;10&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;S dalšími čísly dostáváme 12 a 6.&lt;/p&gt;
+&lt;p&gt;Takže otočení doprava v tomto případě je hodnota 10, dolů 12 a doleva 6.&lt;/p&gt;
+&lt;p&gt;A to bylo tentokrát vše.&lt;/p&gt;
+&lt;p&gt;Příští lekce se bude věnovat GITu s Jirkou, máme si zopakovat lekce &lt;a href="https://naucse.python.cz/course/pyladies/sessions/git/"&gt;Správa zdrojového kódu&lt;/a&gt; a &lt;a href="https://naucse.python.cz/course/pyladies/sessions/foss/"&gt;Spolupráce a Open-Source&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Za dva týdny bude následovat další lekce s Petrem, na kterou máme za úkol náš mapový podklad, prozatím s jednou vrstvou a bez otáčení prvků, uložit ve formátu JSON, naimportovat do Pythonu a mapu vykreslit v Pygletu.&lt;/p&gt;
+&lt;p&gt;A jak na to? Chceme načíst herní plán jako slovník políček.&lt;/p&gt;
+&lt;p&gt;STAV = slovník políček
+klíč: (x, y)
+hodnota: seznam efektů # ← číslo z JSON&lt;/p&gt;
+&lt;p&gt;Nahrávaná mapa má pouze 1 vrstvu, bez otáčení dlaždic.&lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>Druhý sraz, aneb pořád kreslíme</title><link href="https://roboprojekt.pyladies.cz/druhy-sraz-aneb-porad-kreslime" rel="alternate"></link><published>2018-10-13T16:13:00+02:00</published><updated>2018-10-13T16:13:00+02:00</updated><author><name>Karolina Surma</name></author><id>tag:roboprojekt.pyladies.cz,2018-10-13:/druhy-sraz-aneb-porad-kreslime</id><summary type="html">&lt;div&gt;&lt;p&gt;Kdyby se někdo zeptal, jak jedním slovem shrnu druhý sraz RoboProjektu, odpovím: "přituhuje".&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="mind mapa" src="./images/mindmap.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;Za podzimního večera jsme se opět v hojném počtu sešly (žádná to po prvním srazu nevzdala, hurááá!), tentokrát nad našimi mapami. I když jsem si myslela, že si naše výsledky budou podobné, opak byl pravdou. Na některých …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;Kdyby se někdo zeptal, jak jedním slovem shrnu druhý sraz RoboProjektu, odpovím: "přituhuje".&lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;img alt="mind mapa" src="./images/mindmap.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/figure&gt;
+&lt;p&gt;Za podzimního večera jsme se opět v hojném počtu sešly (žádná to po prvním srazu nevzdala, hurááá!), tentokrát nad našimi mapami. I když jsem si myslela, že si naše výsledky budou podobné, opak byl pravdou. Na některých ze základních pojmů jsme se shodly, ostatní jsme zpracovaly každá úplně jinak.&lt;/p&gt;
+&lt;p&gt;Prvním úkolem srazu bylo tedy vytvořit společnou mind mapu naší hry. Rozhodly jsme se, že začneme "pohybem", tedy tím, co se děje na již existujícím herním plánu. Výběr plánu, robotího programu a akce před zahájením daného kola jsme prozatím z uvažování vynechaly. Centrální postavou naší mapy se stal robot, doprovázen neméně důležitým herním políčkem. Postupně jsme dokreslovaly další objekty a souvislosti mezi nimi. Zhruba po hodině jsme se shodly na finální podobě mapy. Než jsme otevřely šampaňské, Petr nás přivolal zpátky na zem s tím, že teď naše dílo můžeme zahodit.&lt;/p&gt;
+&lt;p&gt;Naštěstí ne úplně. Python je objektový jazyk, takže naše "lidská" mapa se musí postupně převést na pojmy jemu známé. Další díl projektové skladačky vyžadoval vytvoření &lt;a href="https://en.wikipedia.org/wiki/Unified_Modeling_Language"&gt;UML diagramu&lt;/a&gt;. Na základě poznatků, získaných díky mapě, jsme se pustily do modelování tříd budoucího kódu. S každou odpovědí na otázku, co robot &lt;em&gt;má&lt;/em&gt;, a co &lt;em&gt;umí&lt;/em&gt;, se rýsovaly výraznější rozdíly mezi atributy a metodami. Pro každý atribut se následně definoval jeho datový typ, a pro každou metodu argumenty, které vezme, spolu s výsledkem, který vrátí. Nejsme ještě u konce: v rámci domácího úkolu se pokusíme diagramy dokončit a popřemýšlet mj., jak naprogramovat políčkům zdi.&lt;/p&gt;
+&lt;p&gt;Uff, a to jsme ještě nezaply počítače! Pro většinu z nás, ne-li všechny, je to první kontakt s tímto stylem uvažování o složitém a vcelku velkém problému.&lt;/p&gt;
+&lt;p&gt;Pro odlehčení jsme chvilku debatovaly nad podobou, jakou dáme projektovému blogu. Na Petrovo doporučení jsme se rozhodly pro GitHub, kam posíláme příspěvky pomocí gitu. Myšlenka na git v nás sice zpočátku nevzbudila velké nadšení, ale všechny víme, že praxí se člověk učí nejlépe.&lt;/p&gt;
+&lt;p&gt;Petr nám zdejší stránky vytvořil a připravil pracovní prostředí, za což mu zde jménem účastnic chci poděkovat :).&lt;/p&gt;&lt;/div&gt;</content></entry><entry><title>První sraz</title><link href="https://roboprojekt.pyladies.cz/prvni-sraz" rel="alternate"></link><published>2018-10-10T09:58:00+02:00</published><updated>2018-10-10T09:58:00+02:00</updated><author><name>Anežka Müller</name></author><id>tag:roboprojekt.pyladies.cz,2018-10-10:/prvni-sraz</id><summary type="html">&lt;div&gt;&lt;p&gt;Letošní podzimní semestr se pro brněnské PyLadies nese částečně v duchu experimentů.
+Krom klasického kurzu pro začátečníky se totiž pod vedením Petra Viktorina rozběhl nový formát tohoto kurzu a také novinka pro pokročilejší, kurz zaměřený na realizaci praktického projektu a týmovou spolupráci. &lt;/p&gt;
+&lt;p&gt;V rámci kurzu budeme pod Petrovým dohledem v …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div&gt;&lt;p&gt;Letošní podzimní semestr se pro brněnské PyLadies nese částečně v duchu experimentů.
+Krom klasického kurzu pro začátečníky se totiž pod vedením Petra Viktorina rozběhl nový formát tohoto kurzu a také novinka pro pokročilejší, kurz zaměřený na realizaci praktického projektu a týmovou spolupráci. &lt;/p&gt;
+&lt;p&gt;V rámci kurzu budeme pod Petrovým dohledem v devítičlenné skupině převádět do počítačové podoby deskovou hru RoboRally.
+Včetně dokumentace, testování, všeho potřebného.
+Kurz nemá předpřipravené materiály, vše bude na nás.
+Jak Petr krásně na úvod řekl, budeme se učit dělat software tak, jak by se dělal, kdyby na to byl dostatek času :).
+Protože mi přesně něco takového, jako je praktický projekt, po absolvování začátečnického kurzu chybělo, rozhodla jsem se to zkusit.&lt;/p&gt;
+&lt;p&gt;Jak jsem již zmínila, kurz nemá žádné materiály, padlo tedy rozhodnutí psát o jeho průběhu blog. &lt;/p&gt;
+&lt;p&gt;Složení našeho pracovního týmu je čistě dámské a všechny z nás jsou již s PyLadies nějak spojeny, ať už jako absolventky kurzů, nebo organizátorky. Sešly jsme se poprvé tento týden v prostorách společnosti Kinali, která se stala sponzorem tohoto kurzu a nabídla nám svoje prostory. Vděčíme za to Karolině, organizátorce začátečnického kurzu a zároveň účastnici tohoto projektu, která pro Kinali pracuje jako testerka. Děkujeme :) &lt;/p&gt;
+&lt;p&gt;První setkání bylo primárně seznamovací. A to jak v rámci týmu, tak s náplní samotného kurzu (nebo spíše projektu) a toho, co nás čeká.
+Proběhlo představovací kolečko, kde jsme mluvily také o tom, co nás do kurzu přivedlo. 
+Většina z nás do toho jde s podobnou motivací - zdokonalit se v tom, co známe ze začátečnických kurzů, naučit se to více prakticky využívat, spolupracovat na vývoji, mít nějaký projekt, který budeme moci prezentovat.
+A to nejen my, jednotlivé členky týmu, ale také celkově PyLadies, když se například účastníme nějaké konference nebo prezentace - budeme moci ukázat nějaký reálný výsledek práce absolventek kurzu. &lt;/p&gt;
+&lt;figure class="figure"&gt;&lt;a href="./images/hrajeme.jpg" target="_blank" title="hrajeme"&gt;&lt;img alt="hrajeme" src="https://roboprojekt.pyladies.cz/images/thumbnails/hrajeme.jpg" class="figure-img img-fluid img-rounded"&gt;&lt;/a&gt;&lt;/figure&gt;
+&lt;p&gt;Po vzájemném představení přišla už praktičtější část setkání, vyzkoušely jsme si nakreslit mind mapu na příkladu šachů, abychom ji pak doma vytvořily pro RoboRally.
+Poté přišla na řadu samotná hra. Patřila jsem k té části týmu, co ji nikdy předtím nehrála, takže to bylo rozhodně potřeba :)
+Stihly jsme několik kol, abychom si trochu prošly pravidla a ukázaly, jak hra funguje.
+Z časových důvodů se nám však hru nepodařilo dohrát.
+Jako základ pro tvorbu myšlenkové mapy to ale určitě spolu s psanými pravidly postačí.&lt;/p&gt;
+&lt;p&gt;Příště se tedy sejdeme nad našimi mapami a uvidíme, co bude dál.
+V mezičase nám pro domluvu a týmovou komunikaci bude sloužit Slack. &lt;/p&gt;&lt;/div&gt;</content></entry></feed>
